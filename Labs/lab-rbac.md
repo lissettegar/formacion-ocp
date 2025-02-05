@@ -1,13 +1,13 @@
 ### Uso de Roles predefinidos
 
-1. Logarse en el cluster con un token del usuario kubeadmin:
+1. Logarse en el cluster con el usuario de cada uno, obteniendo un token en la consola de OCP:
 
-		oc login --token=hZrSGu0uf0APzxbbGsesDO2IcAhueIy88IXjKDF6xvQ --server=https://api.openshift45.ocp.local:6443
+		oc login --token=xxx --server=https://xxx:6443
 		Login successful.
-		You don't have any projects. You can try to create a new project, by running
-			oc new-project <projectname>
+		...
 
-2. Para ver la lista de todos los clusterroles disponibles:
+
+3. Para ver la lista de todos los clusterroles disponibles:
 
 		oc get clusterrole
 
@@ -19,7 +19,7 @@
 		<output omitted>
 		...
 
-3. Use el comando 'oc describe' para ver que rules estan definidas para un role en particular:
+4. Use el comando 'oc describe' para ver que rules estan definidas para un role en particular:
 
 	   oc describe clusterrole/edit
 
@@ -31,68 +31,59 @@
 
 	se puede ver que las únicas acciones permitidas en los recursos son obtener, listar y observar, lo que lo convierte en una opción perfecta si, por ejemplo, desea otorgar a un equipo de desarrollo la capacidad para ver los recursos de la aplicación en producción, pero no para modificar ninguno de ellos ni crear nuevos recursos.
 
-4. Logarse con el primer usuario:
+5. Logarse con el primer usuario de rbac:
 
-		oc login https://api.openshift45.ocp.local:6443 -u user01 -p 1234
+		oc login https://xxx:6443 -u user<x>rbac1
 		Login successful.
-
-		You don't have any projects. You can try to create a new project, by running
-
-			oc new-project <projectname>
+		...
 
 
 
-5. Crear un nuevo proyecto
+6. Crear un nuevo proyecto
 
-		oc new-project user01-project
+		oc new-project user<x>rbac1-project
 
-6. Logarse como el segundo usuario y comprobar si se tiene acceso al proyecto del primer usuario:
+7. Logarse como el segundo usuario de rbac y comprobar si se tiene acceso al proyecto del primer usuario:
 
-		oc login https://api.openshift45.ocp.local:6443 -u user02 -p 1234
+		oc login https://xxx:6443 -u user<x>rbac2
 
-		oc project user01-project
-		error: You are not a member of project "user01-project".
-		You are not a member of any projects. You can request a project to be created with the 'new-project' command.
+		oc project user<x>rbac1-project
 
-7. A continuación daremos permisos al usuario 2 para que tenga privilegios de "edit" en el proyecto del usuario 1:
 
-		oc login https://api.openshift45.ocp.local:6443 -u user01
-		oc adm policy add-role-to-user edit user02
+8. A continuación daremos permisos al usuario 2 para que tenga privilegios de "edit" en el proyecto del usuario 1:
 
-8. Comprobar los rolebinding existentes en el proyecto:
+		oc login https://xxx:6443 -u user<x>rbac1
+		oc adm policy add-role-to-user edit user<x>rbac2
+
+9. Comprobar los rolebinding existentes en el proyecto:
 
 		oc get rolebinding
 
-9. Ver los detalles de todos los `rolebinding` del proyecto:
+10. Ver los detalles de todos los `rolebinding` del proyecto:
 
 		oc describe rolebinding <nombre>
 
-10. Logarse nuevamente como user02 y comprobar que ahora se tiene acceso al proyecto del user01:
+11. Logarse nuevamente como user<x>rbac2 y comprobar que ahora se tiene acceso al proyecto del user<x>rbac1:
 
-		oc login https://api.openshift45.ocp.local:6443 -u user02
-		Logged into "https://api.openshift45.ocp.local:6443" as "user02" using existing credentials.
+		oc login https://xxx:6443 -u user<x>rbac2
+		...
 
-		You have one project on this server: "user01-project"
 
-		Using project "user01-project".
-
-11. Comprobar que el único proyecto que puede ver el user02 es el `user01-project`:
+12. Comprobar que el único proyecto que puede ver el user<x>rbac2 es el `user<x>rbac1-project`:
 
 		oc get project
-		NAME             DISPLAY NAME   STATUS
-		user01-project                  Active
+
 
 
 ### Creando Roles Personalizados
 
 Si los roles predefinidos no son suficientes, siempre puede crear roles personalizados con las reglas específicas que necesita.
 
-1. Creemos un role personalizado que se pueda usar en lugar del role de edición para crear y obtener pods:
+1. Creemos un role personalizado que se pueda usar en lugar del role de edición para crear y obtener pods. Logarse con el usuario de cada uno con un token:
 
-		oc login --token=hZrSGu0uf0APzxbbGsesDO2IcAhueIy88IXjKDF6xvQ --server=https://api.openshift45.ocp.local:6443
-		export GUID=lgp
+		oc login --token=xxx --server=https://xxx:6443
+		export GUID=<lgp>
 		oc create clusterrole custom-role-${GUID} --verb=get,list,watch --resource=namespace,project
-		clusterrole.rbac.authorization.k8s.io/custom-role-lgp created
 
 	Note que hemos iniciado sesión como cluster-admin para crear un `Clusterrole`.
 
@@ -108,40 +99,24 @@ Si los roles predefinidos no son suficientes, siempre puede crear roles personal
 		  namespaces                     []                 []              [get list watch]
 		  projects.project.openshift.io  []                 []              [get list watch]
 
-3. Añadir el nuevo clusterrole al user02
+3. Añadir el nuevo clusterrole al usuario user<x>rbac2
 
-		oc adm policy add-cluster-role-to-user custom-role-${GUID} user02
-		clusterrole.rbac.authorization.k8s.io/custom-role-lgp added: "user02"
+		oc adm policy add-cluster-role-to-user custom-role-${GUID} user<x>rbac2
 
 		oc get clusterrolebinding |grep $GUID
-		custom-role-lgp                                                                   32s
 
 		oc describe clusterrolebinding custom-role-${GUID}
-		Name:         custom-role-lgp
-		Labels:       <none>
-		Annotations:  <none>
-		Role:
-		  Kind:  ClusterRole
-		  Name:  custom-role-lgp
-		Subjects:
-		  Kind  Name    Namespace
-		  ----  ----    ---------
-		  User  user02  
 
-4. Comprobar cuantos proyectos puede ver ahora el user02:
 
-		oc login https://api.openshift45.ocp.local:6443 -u uer02
-		Logged into "https://api.openshift45.ocp.local:6443" as "user02" using existing credentials.
+4. Comprobar cuantos proyectos puede ver ahora el user<x>rbac2:
 
-		You have one project on this server: "user01-project"
-
-		Using project "user01-project".
+		oc login https://xxx:6443 -u user<x>rbac2
 
 		oc get project
 
 
 5. Limpiar el entorno:
 
-		oc login --token=hZrSGu0uf0APzxbbGsesDO2IcAhueIy88IXjKDF6xvQ --server=https://api.openshift45.ocp.local:6443
+		oc login -u user<x> --server=https://xxx:6443
 		oc delete clusterrolebinding custom-role-${GUID}
-		oc delete project user01-project		
+		oc delete project user<x>rbac1-projec		
