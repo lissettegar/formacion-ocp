@@ -36,7 +36,7 @@ Requisitos:
     
     $ oc get route
     NAME       HOST/PORT                                     PATH   SERVICES   PORT   TERMINATION   WILDCARD
-    my-nginx   my-nginx-lgp-formacion.apps.ocpdes.rtve.int          my-nginx   80                   None
+    my-nginx   my-nginx-lgp-formacion.apps.xxx.xxx          my-nginx   80                   None
 
   1.4 Ver los recursos del projecto. Comprobar como se han creado los objetos deployment config, pods, secrets, etc:
 
