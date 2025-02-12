@@ -15,6 +15,7 @@ Requisitos:
   1.1. Crear el proyecto y desplegar una aplicacion desde un repositorio de Git:
 
     $ oc new-project $GUID-env
+    $ oc adm policy add-scc-to-user anyuid system:serviceaccount:<proyecto>:default
     $ oc create deployment my-nginx --image=quay.io/jitesoft/nginx --port=80
 
   1.2. Ver los eventos:
