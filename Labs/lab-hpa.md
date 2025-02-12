@@ -93,13 +93,13 @@ Salvar y recargar.
                 name: cpu
                 target:
                   type: Utilization
-                  averageUtilization: 1     
+                  averageUtilization: 10     
            
 
       Otra forma de crear el `hpa` es por linea de comandos, por ejemplo:
 
         oc project lgp-hpa
-        oc autoscale deployment/lgp-patient --max=5 --cpu-percent=1
+        oc autoscale deployment/lgp-patient --max=5 --cpu-percent=10
         horizontalpodautoscaler.autoscaling/lgp-patient autoscaled
         oc get hpa
         NAME          REFERENCE                TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
