@@ -75,7 +75,7 @@ Salvar y recargar.
 
 11. Habilitar el autoscaler. Opción `Workloads > Horizontal Pod Autoscalers > Create Horizontal Pod Autoscaler`. Sustituir el template que aparece por el siguiente, sustituyendo el texto que aparece entre <>:
 
-        apiVersion: autoscaling/v2beta1
+        apiVersion: autoscaling/v2
         kind: HorizontalPodAutoscaler
         metadata:
           name: <NOMBRE>
