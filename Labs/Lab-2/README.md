@@ -199,7 +199,7 @@ Requisitos:
        resources:
          requests:
            storage: 1Mi
-       storageClassName: ibm-spectrum-scale-csi-consistency-group-delete
+       storageClassName: powerstore-ext4
        volumeMode: Filesystem
 
         $ oc create -f pvc-dinamic.yaml
